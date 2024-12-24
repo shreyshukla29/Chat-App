@@ -1,7 +1,12 @@
 // Firebase imports
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut } from "firebase/auth";
-import { getFirestore, setDoc, doc, serverTimestamp } from "firebase/firestore";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
 
 // Third-party imports
 import { toast } from "react-toastify";
@@ -44,7 +49,7 @@ const signup = async (username, email, password) => {
       name: "",
       avatar: "",
       bio: "Hey, there! I am using ChatApp",
-      lastSeen: serverTimestamp(),
+      lastSeen: Date.now(),
     });
 
     await setDoc(doc(db, "chats", user.uid), {
@@ -54,7 +59,7 @@ const signup = async (username, email, password) => {
     toast.success("Signup successful!");
   } catch (error) {
     const handleAuthError = (code) => {
-      console.log(code)
+      console.log(code);
       switch (code) {
         case "auth/email-already-in-use":
           return "This email is already registered.";
@@ -79,8 +84,9 @@ const login = async (email, password) => {
   }
 
   try {
+    // eslint-disable-next-line no-unused-vars
     const res = await signInWithEmailAndPassword(auth, email, password);
-    const user = res.user;
+   // const user = res.user;
 
     // Optionally, you can handle post-login actions here
     toast.success(`Welcome back`);
@@ -89,11 +95,11 @@ const login = async (email, password) => {
       switch (code) {
         case "auth/user-not-found":
           return "No user found with this email.";
-        
+
         case "auth/wrong-password":
           return "Incorrect password.";
-          case "auth/invalid-credential":
-            return "Invalid email or password.";
+        case "auth/invalid-credential":
+          return "Invalid email or password.";
         default:
           return "Something went wrong. Please try again.";
       }
@@ -104,16 +110,15 @@ const login = async (email, password) => {
   }
 };
 
-
 const logout = async () => {
   try {
     await signOut(auth);
     toast.success("Logged out successfully!");
-    return {success:true}
+    return { success: true };
   } catch (error) {
     console.error("Logout error:", error);
     toast.error("Failed to log out. Please try again.");
-    return {success:false}
+    return { success: false };
   }
 };
-export { login, signup,logout,auth,db};
+export { login, signup, logout, auth, db };

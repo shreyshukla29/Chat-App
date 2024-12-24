@@ -5,7 +5,7 @@ import {signup, login} from "../../config/firebase"
 import { toast } from 'react-toastify';
 const Login = () => {
 
-    const [currState, setCurrState] = useState("Sign up");
+    const [currState, setCurrState] = useState("Login");
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password,setPassword] = useState('');
