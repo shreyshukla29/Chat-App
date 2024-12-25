@@ -4,7 +4,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
+  signOut,sendPasswordResetEmail
 } from "firebase/auth";
 import { getFirestore, setDoc, doc } from "firebase/firestore";
 
@@ -19,6 +19,11 @@ const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
+import { collection } from 'firebase/firestore';
+import { query } from 'firebase/firestore';
+import { where } from 'firebase/firestore';
+import { getDocs } from 'firebase/firestore';
+
 
 
 // Initialize Firebase
@@ -92,6 +97,7 @@ const login = async (email, password) => {
 
     // Optionally, you can handle post-login actions here
     toast.success(`Welcome back`);
+    return {success:true}
   } catch (error) {
     const handleAuthError = (code) => {
       switch (code) {
@@ -123,4 +129,30 @@ const logout = async () => {
     return { success: false };
   }
 };
-export { login, signup, logout, auth, db };
+
+
+const resetPassword = async (email) => {
+  if(!email){
+    toast.error("Enter your email")
+    return null;
+  }
+
+  try {
+    const userRef = collection(db,'users');
+    const q = query(userRef, where('email','==',email));
+
+    const querySnap = await getDocs(q);
+    if(!querySnap.empty){
+      await sendPasswordResetEmail(auth,email);
+
+      toast.success('Reset Email Send')
+    }else{
+      toast.error('Email does not exist')
+    }
+
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message)
+  }
+}
+export { login, signup, logout, auth, db,resetPassword };

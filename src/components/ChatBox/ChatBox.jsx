@@ -22,9 +22,8 @@ const ChatBox = () => {
     messagesId,
     setMessagesId,
     chatUser,
-    setchatUser,
+    setchatUser, chatVisible, setchatVisible
   } = useContext(AppContext);
-
   const [input, setinput] = useState("");
 
   const sendMessage = async () => {
@@ -129,18 +128,19 @@ return  hour+":"+(minute>9 ? minute :'0'+minute)+"AM"
         unSub();
       };
     }
-  }, [messagesId]);
+  }, [messagesId,chatUser]);
 
   return chatUser ? (
-    <div className="chat-box">
+    <div className={` chat-box  ${chatVisible ? "" : 'hidden'}`}>
       {/* user section */}
       <div className="chat-user">
         <img src={chatUser.userData.avatar} alt="" />
         <p>
           {chatUser.userData.name}{" "}
-          <img src={assets.green_dot} alt="" className="dot" />
+        {Date.now()-chatUser.userData.lastSeen <= 70000 &&   <img src={assets.green_dot} alt="" className="dot" />}
         </p>
         <img src={assets.help_icon} alt="" className="help" />
+        <img onClick={()=>setchatVisible(false)} src={assets.arrow_icon} alt=""  className="arrow"/>
       </div>
 
       {/* chat section  */}
@@ -184,7 +184,7 @@ return  hour+":"+(minute>9 ? minute :'0'+minute)+"AM"
       </div>
     </div>
   ) : (
-    <div className="chat-welcome">
+    <div className={`chat-welcome ${chatVisible ? "" :'hidden'}`}>
       <img src={assets.logo_icon} alt="" />
       <p>Chat anytime, any where</p>
     </div>

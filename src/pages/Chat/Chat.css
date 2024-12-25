@@ -1,7 +1,6 @@
 .chat {
     min-height: 100vh;
     background: linear-gradient(#596AFF , #383699);
-    ;
     display: grid;
     place-items: center;
 
@@ -17,4 +16,18 @@
 .loading{
     font-size: 50px;
     color:white;
+}
+
+@media (max-width:900px) {
+    .chat{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .loading{
+        font-size:30px;
+    }
+    .chat-container{
+        display: flex;
+    }
 }

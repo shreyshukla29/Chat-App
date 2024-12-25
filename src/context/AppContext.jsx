@@ -9,8 +9,7 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 
 const AppContext = createContext();
-export { AppContext }
-
+export { AppContext };
 
 const AppContextProvider = (props) => {
   const [userData, setUserData] = useState(null);
@@ -18,6 +17,7 @@ const AppContextProvider = (props) => {
   const [messagesId, setMessagesId] = useState(null);
   const [messages, setmessages] = useState([]);
   const [chatUser, setchatUser] = useState(null);
+  const [chatVisible, setchatVisible] = useState(false);
   const navigate = useNavigate();
   const loadUserData = async (uid) => {
     try {
@@ -76,7 +76,9 @@ const AppContextProvider = (props) => {
     messagesId,
     setMessagesId,
     chatUser,
-    setchatUser
+    setchatUser,
+    chatVisible,
+    setchatVisible,
   };
 
   return (

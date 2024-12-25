@@ -1,7 +1,7 @@
 import "./Login.css";
 import assets from "./../../assets/assets";
 import { useState } from 'react';
-import {signup, login} from "../../config/firebase"
+import {signup, login,resetPassword} from "../../config/firebase"
 import { toast } from 'react-toastify';
 const Login = () => {
 
@@ -9,6 +9,8 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password,setPassword] = useState('');
+
+    const [terms,setTerms] = useState(false)
 
     const onSubmitHandler = (e)=>{
       e.preventDefault();
@@ -18,7 +20,14 @@ const Login = () => {
         return;
       }
 
+    
+
       if(currState === 'Sign up'){
+
+        if(!terms){
+          toast.error('please agree the terms & privacy policy')
+          return;
+        }
         signup(username,email,password)
         setUsername('')
         setEmail('')
@@ -57,7 +66,8 @@ const Login = () => {
       
         <button type="submit">{currState ==="Sign up" ? "Create account" : "Login now"}</button>
         <div className="login-term">
-          <input type="checkbox" />
+          <input type="checkbox" 
+          onChange={()=>setTerms(!terms)}/>
           <p>Agree to the terms of use & privacy policy.</p>
         </div>
         <div className="login-forgot">
@@ -72,6 +82,10 @@ const Login = () => {
             <span
             onClick= {()=> setCurrState('Sign up')}>{' '}click here</span>
           </p>}
+          {currState === 'Login' &&
+          <p className="login-toggle">Forgot Password 
+          <span
+          onClick={()=> resetPassword(email)}>{' '}Reset here</span> </p> }
         </div>
       </form>
     </div>

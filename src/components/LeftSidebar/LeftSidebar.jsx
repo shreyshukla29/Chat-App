@@ -3,12 +3,13 @@ import "./LeftSidebar.css";
 import assets from "./../../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { query, collection, where } from "firebase/firestore";
-import { db } from "../../config/firebase";
+import { db ,logout} from "../../config/firebase";
 import { getDocs,setDoc,doc,serverTimestamp ,updateDoc,arrayUnion} from "firebase/firestore";
 import { AppContext } from "./../../context/AppContext";
 import { useContext, useState } from "react";
 import { toast } from 'react-toastify';
 import { getDoc } from 'firebase/firestore';
+import { useEffect } from 'react';
 
 
 
@@ -19,7 +20,8 @@ const LeftSidebar = () => {
     messagesId,
     setMessagesId,
     chatUser,
-    setchatUser } = useContext(AppContext);
+    setchatUser ,
+    chatVisible, setchatVisible} = useContext(AppContext);
   const [user, setUser] = useState(null); // Fixed the destructuring here
   const [showSearch, setShowSearch] = useState(false);
 
@@ -89,10 +91,42 @@ const LeftSidebar = () => {
 
         })
       })
+      const uSnap = await getDoc(doc(db,'users',user.id));
+      const uData = uSnap.data();
+      setChat({
+        messageId: newMessageRef.id,
+        lastMessage:'',
+        rId:user.id,
+        updatedAt:Date.now(),
+        messageSeen:true,
+        userData:uData
+      })
+
+      setShowSearch(false);
+      setchatVisible(true);
     }catch(error){
       toast.error('error in adding friend')
     }
   }
+
+  useEffect(() => {
+    
+  const updateChatUserData = async () => {
+    if(chatUser){
+      const userRef = doc(db,'users',chatUser.userData.id);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.data();
+      setchatUser(prev=> ({
+        ...prev,
+        userData
+      }))
+    }
+  }
+
+  updateChatUserData()
+   
+  }, [chatData])
+  
 
   const setChat= async(item)=>{
 
@@ -110,12 +144,13 @@ const LeftSidebar = () => {
     await updateDoc(userChatsRef,{
       chatsData : userChatData.chatsData
     })
+    setchatVisible(true)
    
   }
 
 
   return (
-    <div className="ls">
+    <div className={`ls  ${chatVisible ? 'hidden':''}`}>
       <div className="ls-top">
         <div className="ls-nav">
           <img src={assets.logo} alt="logo" className="logo" />
@@ -124,7 +159,7 @@ const LeftSidebar = () => {
             <div className="sub-menu">
               <p onClick={() => navigate("/profile")}>Edit Profile</p>
               <hr />
-              <p>Logout</p>
+              <p onClick={logout}>Logout</p>
             </div>
           </div>
         </div>

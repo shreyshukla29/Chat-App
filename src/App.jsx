@@ -1,5 +1,5 @@
 import Login from "./pages/login/Login";
-import { Routes, Route ,useNavigate} from "react-router-dom";
+import { Routes, Route ,useNavigate,useLocation} from "react-router-dom";
 import { Chat } from './pages/Chat/Chat';
 import ProfileUpdate from './pages/ProfileUpdate/ProfileUpdate';
 import { ToastContainer }from'react-toastify';
@@ -11,16 +11,17 @@ import { AppContext } from './context/AppContext';
 function App() {
 
   const navigate = useNavigate();
+  const location = useLocation();
   const {loadUserData} = useContext(AppContext)
 
   useEffect(() => {
    
     onAuthStateChanged(auth,async (user) => {
-      if(user){
-      
+      if(user  && location.pathname === "/"){
         await loadUserData(user.uid)
+        navigate('/chat')
       }
-      else{
+      else if(!user){
         navigate('/')
       }
     })
