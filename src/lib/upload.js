@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
       return;
     }
 
+    console.log(image)
+
     const formData = new FormData();
     formData.append('file', image); // Append the image file
     formData.append('upload_preset', import.meta.env.VITE_PresetName); // Replace with your Cloudinary upload preset

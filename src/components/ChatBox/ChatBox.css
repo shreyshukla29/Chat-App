@@ -117,7 +117,7 @@ img.dot{
 }
 
 .msg-img{
-    max-width: 230px;
+    max-width: 200px;
     margin-bottom: 30px;
     border-radius: 10px;
 }
@@ -141,3 +141,4 @@ img.dot{
     font-weight: 500;
     color: #383838;
 }
+

@@ -8,6 +8,8 @@ import { getDocs,setDoc,doc,serverTimestamp ,updateDoc,arrayUnion} from "firebas
 import { AppContext } from "./../../context/AppContext";
 import { useContext, useState } from "react";
 import { toast } from 'react-toastify';
+import { getDoc } from 'firebase/firestore';
+
 
 
 const LeftSidebar = () => {
@@ -96,6 +98,18 @@ const LeftSidebar = () => {
 
     setMessagesId(item.messageId);
     setchatUser(item);
+
+    const userChatsRef = doc(db,'chats',userData.id);
+    const  userChatsSnapshot = await getDoc(userChatsRef);
+
+    const userChatData = userChatsSnapshot.data();
+
+    const chatIndex = userChatData.chatsData.findIndex((c)=> c.messageId === item.messageId );
+
+    userChatData.chatsData[chatIndex].messageSeen = true;
+    await updateDoc(userChatsRef,{
+      chatsData : userChatData.chatsData
+    })
    
   }
 
@@ -132,7 +146,8 @@ const LeftSidebar = () => {
           </div>
         ) : (
           chatData?.map((item, index) => (
-              <div key={index} className="friends"
+              <div key={index} className={`friends ${item.messageSeen
+                || item.messageId === messagesId ?"":"border" }`}
               onClick={()=>setChat(item)}>
                 <img src={item.userData?.avatar} alt="" />
                 <div>
