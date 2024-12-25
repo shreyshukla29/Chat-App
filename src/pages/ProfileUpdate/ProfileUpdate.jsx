@@ -1,6 +1,6 @@
 import './ProfileUpdate.css'
 import assets from './../../assets/assets';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import handleImageUpload from './../../lib/upload';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc } from 'firebase/firestore';
@@ -9,6 +9,7 @@ import { getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { updateDoc } from 'firebase/firestore';
+import {AppContext} from './../../context/AppContext';
 const ProfileUpdate = () => {
   const [image, setImage] = useState(false);
   const [avatarURL , setAvatarURL] = useState('');
@@ -16,7 +17,7 @@ const ProfileUpdate = () => {
   const [bio, setBio] = useState('');
   const navigate= useNavigate()
 const [uid, setuid] = useState('');
-
+const {setUserData} = useContext(AppContext);
 const profileUpdate = async (e) => {
 
   e.preventDefault()
@@ -24,6 +25,7 @@ const profileUpdate = async (e) => {
   try {
     if(!avatarURL && !image){
       toast.error('upload profile image')
+      return
     }
 
     const docRef = doc(db,'users',uid);
@@ -42,6 +44,10 @@ const profileUpdate = async (e) => {
       })
     }
 
+    const snap = await getDoc(docRef);
+    setUserData(snap.data());
+    navigate('/chat')
+
   } catch (error) {
     console.error('error occur',error)
     toast.error('error in updating profile')
@@ -56,8 +62,7 @@ const profileUpdate = async (e) => {
       if(user){
         setuid(user.uid);
         const docRef =doc(db,'users',user.uid);
-        const docSnap = await 
-        getDoc(docRef);
+        const docSnap = await getDoc(docRef);
         if(docSnap.data().name){
           setName(docSnap.data().name)
         }
@@ -67,6 +72,7 @@ const profileUpdate = async (e) => {
         if(docSnap.data().avatar){
           setAvatarURL(docSnap.data().avatar)
         }
+        
       }else{
         navigate('/')
       }

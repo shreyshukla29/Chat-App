@@ -1,14 +1,47 @@
+/* eslint-disable no-unused-vars */
 import './ChatBox.css';
 import assets from './../../assets/assets';
-
+import { useContext } from 'react';
+import {AppContext} from './../../context/AppContext';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { onSnapshot } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
+import {db} from '../../config/firebase'
 const ChatBox = () => {
-  return (
+
+  const {userData, messages,
+    setmessages,
+    messagesId,
+    setMessagesId,
+    chatUser,
+    setchatUser} = useContext(AppContext);
+
+    const [input, setinput] = useState('');
+
+    useEffect(() => {
+      if(messagesId){
+        const unSub = onSnapshot(doc(db,'messages',messagesId), (res)=>{
+          setmessages(res.data.messages.reverse())
+        })
+
+        return () => {
+        unSub();
+        }
+      }
+    
+     
+    }, [messagesId])
+    
+
+    
+  return chatUser ? (
     <div className="chat-box">
 
       {/* user section */}
       <div className="chat-user">
-        <img src={assets.profile_img} alt="" />
-        <p>Richard Sanford <img src={assets.green_dot} alt=""
+        <img src={chatUser.userData.avatar} alt="" />
+        <p>{chatUser.userData.name} <img src={assets.green_dot} alt=""
         className="dot" /></p>
         <img src={assets.help_icon} alt="" 
         className="help"/>
@@ -58,6 +91,11 @@ const ChatBox = () => {
       </div>
       </div>
   )
+: <div className='chat-welcome'>
+  <img src={assets.logo_icon} alt="" />
+  <p>Chat anytime, any where</p>
+</div>
+
 }
 
 export default ChatBox

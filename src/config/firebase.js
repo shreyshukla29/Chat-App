@@ -10,7 +10,6 @@ import { getFirestore, setDoc, doc } from "firebase/firestore";
 
 // Third-party imports
 import { toast } from "react-toastify";
-
 // Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -21,10 +20,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 
 // Signup function
 const signup = async (username, email, password) => {
@@ -53,7 +54,7 @@ const signup = async (username, email, password) => {
     });
 
     await setDoc(doc(db, "chats", user.uid), {
-      chatData: [],
+      chatsData: [],
     });
 
     toast.success("Signup successful!");
@@ -82,6 +83,7 @@ const login = async (email, password) => {
     toast.error("Email and password are required!");
     return;
   }
+  
 
   try {
     // eslint-disable-next-line no-unused-vars
